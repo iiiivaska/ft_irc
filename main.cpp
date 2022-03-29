@@ -29,7 +29,7 @@ void check_port_before_parse(char *str) {
     while (*str) {
         if (*str < '0' || *str > '9') {
             std::cerr << "Incorrect port, only numbers allowed!\n";
-            exit(-6);
+            exit(1);
         }
         str++;
     }
@@ -39,11 +39,15 @@ void parse_args(args* arguments, int argc, char** argv) {
     if (argc <= 1 || argc >=4) {
         std::cerr << "ERROR: Bad arguments!\n";
         std::cerr << "Please pass port as first argument, and password as second: ./ircserv <port> <password>\n";
-        exit(-5);
+        exit(1);
     }
     check_port_before_parse(argv[1]);
     if (argc > 1) {
         arguments->port = ft_atoi(argv[1]);
+        if (arguments->port < 1024 || arguments->port > 65535) {
+            std::cerr << "Bad port argument, correct port between 1024 and 65535.\n";
+            exit(1);
+        }
         if (argc > 2) {
             arguments->password = argv[2];
         }
@@ -61,7 +65,7 @@ int main(int argc, char** argv) {
 
     if (listening == -1) {
         std::cerr << "Can`t create a socket!";
-        return -1;
+        exit(1);
     }
 
     //Bind the socket to an IP / port
@@ -69,17 +73,28 @@ int main(int argc, char** argv) {
 
     hint.sin_family = AF_INET;
     hint.sin_port = htons(arguments->port);
-    inet_pton(AF_INET, "0.0.0.0", &hint.sin_addr); //МБ нельзя юзать
+    hint.sin_addr.s_addr = inet_addr("0.0.0.0");
+    //inet_pton(AF_INET, "0.0.0.0", &hint.sin_addr); //МБ нельзя юзать
 
+
+    //Make socket reusable instantly
+    int yes = 1;
+    if (setsockopt(listening, SOL_SOCKET, SO_REUSEADDR, &yes, sizeof(int)) == -1) {
+        std::cerr << "ERROR: setsockopt!\n";
+        exit(1);
+    }
+
+    //Continue Binding
     if (bind(listening, (sockaddr*)&hint, sizeof(hint)) == -1) {
-        std::cerr << "Can`t bind to IP/port";
-        return -2;
+        std::cerr << "Can`t bind to IP/port!.\n";
+        std::cerr << std::strerror(errno);
+        exit(1);
     }
 
     //Mark the socket for listening in
     if (listen(listening, SOMAXCONN) == -1) {
         std::cerr << "Can`t listen";
-        return -3;
+        exit(1);
     }
 
     //Accept a call
@@ -92,7 +107,7 @@ int main(int argc, char** argv) {
 
     if (clientSocket == -1) {
         std::cerr << "Problem with client connection!";
-        return -4;
+        exit(1);
     }
 
     //Close the listening socket
