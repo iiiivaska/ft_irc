@@ -1,5 +1,5 @@
 #ifndef SERVER_HPP
-#define SERVER_HPP
+# define SERVER_HPP
 
 #include <iostream>
 #include <string>
@@ -11,6 +11,7 @@
 #include <poll.h>
 #include <fcntl.h>
 #include <vector>
+#include "../User/User.hpp"
 #define BUFFER_SIZE 4096
 
 class Server {
@@ -45,6 +46,8 @@ private:
     void                bind_socket();
     void                listen_socket();
     void                accept_call();
+    void                disconnect_user(int fd);
+    std::vector<pollfd>::iterator   find_fd(int fd);
 };
 
 #endif

@@ -3,7 +3,8 @@
 //
 
 #include "Server.hpp"
-#include "utils.hpp"
+#include "../utils.hpp"
+
 
 Server::Server(int argc, char **argv) {
     _working = 0;
@@ -118,8 +119,38 @@ void Server::accept_call() {
     _poll_fds.push_back(client_poll_fd);
 
     //Необходимо сохранить клиента в мапу
+    User *user = new User(_client_fd, _client_hint);
+    User::addUser(user->getFd(), user);
 
-    std::cout << "Client: " << inet_ntoa(_client_hint.sin_addr) << " connected with port: "<< ntohs(_client_hint.sin_port) << std::endl;
+    std::cout << "Client: " << User::findUser(_client_fd)->getHostname() << " connected with port: "<< User::findUser(_client_fd)->getPort() << std::endl;
+}
+
+std::vector<pollfd>::iterator Server::find_fd(int fd) {
+    for (std::vector<pollfd>::iterator it = _poll_fds.begin(); it != _poll_fds.end(); it++) {
+        if (it.base()->fd == fd) {
+            return it;
+        }
+    }
+    return _poll_fds.begin();
+}
+
+void Server::disconnect_user(int fd) {
+    std::cout<<"Deleting: "<<fd<<std::endl;
+    for (std::vector<pollfd>::iterator it = _poll_fds.begin(); it != _poll_fds.end(); it++) {
+        std::cout << it.base()->fd << " | ";
+    }
+    std::cout << std::endl;
+    User *user = User::findUser(fd);
+    std::vector<pollfd>::iterator fd_iter = find_fd(user->getFd());
+    if (fd_iter == _poll_fds.begin()) {
+        std::cout << "Error while deleting user, no such fd\n";
+        return;
+    }
+    _poll_fds.erase(fd_iter);
+    if (User::deleteUser(fd)) {
+        std::cout << "Error: user was not disconnected\n";
+        return;
+    }
 }
 
 void Server::start() {
@@ -148,11 +179,11 @@ void Server::start() {
 
             //Клиент отключился
             if ((it->revents & POLLHUP) == POLLHUP) {
-
+                disconnect_user(it->fd);
                 break ;
             }
 
-            if ((it->revents && POLLIN) == POLLIN) {
+            if ((it->revents & POLLIN) == POLLIN) {
                 //клиент подключился
                 if (it->fd == _server_socket) {
                     accept_call();
@@ -160,6 +191,7 @@ void Server::start() {
                 }
 
                 //Сообщение
+
             }
 
         }
