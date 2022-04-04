@@ -55,7 +55,7 @@ void Server::set_server_socket() {
 void Server::bind_socket() {
     _hints.sin_family = AF_INET;
     _hints.sin_port = htons(_port);
-    _hints.sin_addr.s_addr = inet_addr("0.0.0.0");
+    _hints.sin_addr.s_addr = inet_addr("127.0.0.1");
 
 
     //Make socket reusable instantly
@@ -153,6 +153,27 @@ void Server::disconnect_user(int fd) {
     }
 }
 
+void Server::message(int fd) {
+    std::string message;
+    char buffer[BUFFER_SIZE];
+
+    bzero(buffer, BUFFER_SIZE);
+
+    //Получаем сообщение
+
+    if(recv(fd, buffer, BUFFER_SIZE, 0) < 0) {
+        std::cerr << "Error while reading message\n";
+        exit(1);
+    }
+    message.append(buffer);
+
+    for (std::vector<pollfd>::iterator it = _poll_fds.begin(); it != _poll_fds.end(); it++) {
+        if (it->fd != fd) {
+            send(it->fd, buffer, sizeof(message)+ 1, 0);
+        }
+    }
+}
+
 void Server::start() {
     _working = 1;
     set_server_socket();
@@ -191,7 +212,7 @@ void Server::start() {
                 }
 
                 //Сообщение
-
+                message(it->fd);
             }
 
         }

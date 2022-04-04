@@ -27,7 +27,7 @@ fclean:		clean
 re:			fclean $(NAME)
 
 run:		$(NAME)
-			./ircserv 54000 pass
+			./ircserv 3490 pass
 
 lrun:		$(NAME)
 			leaks -atExit -- ./ircserv 54000 pass

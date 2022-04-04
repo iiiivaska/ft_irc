@@ -37,7 +37,7 @@ User* User::findUser(int fd) {
 int User::deleteUser(int fd) {
     for(std::map<int, User*>::iterator item = users.begin(); item != users.end(); ++item)
     {
-        std::cout << item->first << " : " << item->second << std::endl; //Вывод ключей и значений
+        std::cout << item->first << " : " << item->second->getPort() << std::endl; //Вывод ключей и значений
     }
     //write(1, "a", 1);
     User *user = findUser(fd);

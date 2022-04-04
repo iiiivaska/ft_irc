@@ -48,6 +48,8 @@ private:
     void                accept_call();
     void                disconnect_user(int fd);
     std::vector<pollfd>::iterator   find_fd(int fd);
+    void                message(int fd);
+    void                readMessage(int fd);
 };
 
 #endif
