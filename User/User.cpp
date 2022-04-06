@@ -46,6 +46,14 @@ int User::deleteUser(int fd) {
     return users.erase(fd) == 0 ? 1 : 0;
 }
 
+void User::addChannel(Channel *channel) {
+    _channel = channel;
+}
+
+void User::deleteChannel() {
+    _channel = nullptr;
+}
+
 //std::vector<pollfd>::iterator User::getClientPollFd() {
 //    return _client_poll_fd;
 //}

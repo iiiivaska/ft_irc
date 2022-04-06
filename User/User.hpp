@@ -12,8 +12,13 @@
 #include <vector>
 #include <map>
 #include <unistd.h>
+#include "../Channel/Channel.hpp"
+
+class Channel;
+
 class User{
 private:
+    Channel*                            _channel;
     int                                 _fd;
     sockaddr_in                         _client_hint;
     std::string                         _hostname;
@@ -28,6 +33,8 @@ public:
     static void         addUser(int fd, User *user);
     static User*        findUser(int fd);
     static int          deleteUser(int fd);
+    void                addChannel(Channel* channel);
+    void                deleteChannel();
 };
 
 #endif

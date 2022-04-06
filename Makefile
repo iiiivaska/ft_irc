@@ -1,8 +1,8 @@
 FLAGS	= -Wall -Wextra -Werror -I. -std=c++98
 
-HEADER	= Server/Server.hpp utils.hpp User/User.hpp
+HEADER	= Server/Server.hpp utils.hpp User/User.hpp Channel/Channel.hpp
 
-SRCS	= Server/Server.cpp main.cpp User/User.cpp
+SRCS	= Server/Server.cpp main.cpp User/User.cpp Channel/Channel.cpp
 
 OBJS	= $(SRCS:.cpp=.o)
 

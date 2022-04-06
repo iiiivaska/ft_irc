@@ -55,7 +55,7 @@ void Server::set_server_socket() {
 void Server::bind_socket() {
     _hints.sin_family = AF_INET;
     _hints.sin_port = htons(_port);
-    _hints.sin_addr.s_addr = inet_addr("127.0.0.1");
+    _hints.sin_addr.s_addr = inet_addr("0.0.0.0");
 
 
     //Make socket reusable instantly
