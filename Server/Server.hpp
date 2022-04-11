@@ -12,7 +12,10 @@
 #include <fcntl.h>
 #include <vector>
 #include "../User/User.hpp"
+#include "../Channel/Channel.hpp"
 #define BUFFER_SIZE 4096
+
+class Channel;
 
 class Server {
     struct args {
@@ -28,6 +31,7 @@ public:
     void            start();
 
 private:
+    std::vector<Channel*> channels;
     int                 _working;
     int                 _port;
     std::string         _password;
@@ -50,6 +54,10 @@ private:
     std::vector<pollfd>::iterator   find_fd(int fd);
     void                message(int fd);
     void                readMessage(int fd);
+
+    int addChannel(Channel *channel);
+    int deleteChannel(Channel *channel);
+    Channel* findChannel(std::string name);
 };
 
 #endif

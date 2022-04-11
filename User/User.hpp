@@ -35,6 +35,7 @@ public:
     static int          deleteUser(int fd);
     void                addChannel(Channel* channel);
     void                deleteChannel();
+    Channel*            getChannel();
 };
 
 #endif

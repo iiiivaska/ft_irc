@@ -160,18 +160,43 @@ void Server::message(int fd) {
     bzero(buffer, BUFFER_SIZE);
 
     //Получаем сообщение
-
-    if(recv(fd, buffer, BUFFER_SIZE, 0) < 0) {
+    User *user = User::findUser(fd);
+    if (recv(fd, buffer, BUFFER_SIZE, 0) < 0) {
         std::cerr << "Error while reading message\n";
         exit(1);
     }
     message.append(buffer);
 
-    for (std::vector<pollfd>::iterator it = _poll_fds.begin(); it != _poll_fds.end(); it++) {
-        if (it->fd != fd) {
-            send(it->fd, buffer, sizeof(message)+ 1, 0);
+    //Test
+    if(strstr(message.c_str(), "ADDCHANNEL")) {
+        std::cout << "Channel Added\n";
+        addChannel(new Channel("mow"));
+        return;
+    }
+    //std::cout << message.substr(0, message.find(" ")) << "\n";
+    if(strstr(message.substr(0, message.find(" ")).c_str(), "ADDTO")) {
+        Channel* channel = findChannel(message.substr(1, message.find(" ")));
+        if (channel) {
+            user->addChannel(channel);
+            channel->addUser(*user);
+        }
+        return ;
+    }
+    if (user->getChannel() == nullptr) {
+        for (std::vector<pollfd>::iterator it = _poll_fds.begin(); it != _poll_fds.end(); it++) {
+            if (it->fd != fd) {
+                send(it->fd, buffer, sizeof(message) + 1, 0);
+            }
+        }
+    } else {
+        std::vector<User> users = user->getChannel()->getUsers();
+        for (std::vector<User>::iterator it = users.begin(); it != user->getChannel()->getUsers().end(); it++) {
+            if (it.base()->getFd() != fd) {
+                send(it.base()->getFd(), buffer, sizeof(message) + 1, 0);
+            }
         }
     }
+    //EndTest
 }
 
 void Server::start() {
@@ -264,6 +289,34 @@ void Server::start() {
 //    close(_client_socket);
 }
 
+int Server::addChannel(Channel *channel) {
+    for (std::vector<Channel*>::iterator it = channels.begin(); it != channels.end(); it++) {
+        if ((*it.base())->getName() == channel->getName()) {
+            return 1;
+        }
+    }
+    channels.push_back(channel);
+    return 0;
+};
+
+int Server::deleteChannel(Channel *channel) {
+    for (std::vector<Channel*>::iterator it = channels.begin(); it != channels.end(); it++) {
+        if ((*it.base())->getName() == channel->getName()) {
+            channels.erase(it);
+            return 0;
+        }
+    }
+    return 1;
+};
+
+Channel *Server::findChannel(std::string name) {
+    for(std::vector<Channel*>::iterator it = channels.begin(); it != channels.end(); it++) {
+        if ((*it.base())->getName() == name) {
+            return (*it.base());
+        }
+    }
+    return nullptr;
+};
 
 Server::~Server() {
 

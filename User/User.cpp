@@ -7,6 +7,7 @@ User::User(int fd, sockaddr_in client_hint) {
     _client_hint = client_hint;
     _hostname = inet_ntoa(_client_hint.sin_addr);
     _port = ntohs(_client_hint.sin_port);
+    _channel = nullptr;
 }
 
 User::~User() {
@@ -52,6 +53,10 @@ void User::addChannel(Channel *channel) {
 
 void User::deleteChannel() {
     _channel = nullptr;
+}
+
+Channel *User::getChannel() {
+    return _channel;
 }
 
 //std::vector<pollfd>::iterator User::getClientPollFd() {

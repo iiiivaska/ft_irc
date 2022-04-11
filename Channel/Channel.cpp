@@ -1,7 +1,5 @@
 #include "Channel.hpp"
 
-std::vector<Channel*> channels = std::vector<Channel*>();
-
 Channel::Channel(std::string name) {
     _name = name;
 }
@@ -36,7 +34,18 @@ void Channel::deleteUser(User user) {
     }
 }
 
+std::vector<User> Channel::getUsers() {
+    return _users;
+}
 
+//Channel *Channel::findChannel(std::string name) {
+//    for(std::vector<Channel*>::iterator it = Channel::channels.begin(); it != Channel::channels.end(); it++) {
+//        if ((*it.base())->getName() == name) {
+//            return (*it.base());
+//        }
+//    }
+//    return nullptr;
+//}
 
 //int Channel::addChannel(Channel *channel) {
 //    for (std::vector<Channel*>::iterator it = channels.begin(); it != channels.end(); it++) {

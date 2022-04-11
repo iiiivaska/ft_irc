@@ -30,6 +30,6 @@ run:		$(NAME)
 			./ircserv 3490 pass
 
 lrun:		$(NAME)
-			leaks -atExit -- ./ircserv 54000 pass
+			leaks -atExit -- ./ircserv 3490 pass
 
 .PHONY:		all clean fclean re run
