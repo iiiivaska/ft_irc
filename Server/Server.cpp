@@ -147,6 +147,9 @@ void Server::disconnect_user(int fd) {
         return;
     }
     _poll_fds.erase(fd_iter);
+    if (user->getChannel() != nullptr) {
+        user->getChannel()->deleteUser(*user);
+    }
     if (User::deleteUser(fd)) {
         std::cout << "Error: user was not disconnected\n";
         return;
@@ -169,28 +172,40 @@ void Server::message(int fd) {
 
     //Test
     if(strstr(message.c_str(), "ADDCHANNEL")) {
+        if (addChannel(new Channel("mow\n")) == 1) {
+            std::cout << "ERROR: Channel exist\n";
+            return;
+        }
         std::cout << "Channel Added\n";
-        addChannel(new Channel("mow"));
         return;
     }
     //std::cout << message.substr(0, message.find(" ")) << "\n";
     if(strstr(message.substr(0, message.find(" ")).c_str(), "ADDTO")) {
-        Channel* channel = findChannel(message.substr(1, message.find(" ")));
+        std::cout << message.substr(6, message.find(" ")) << "\n";
+        Channel* channel = findChannel(message.substr(6, message.find(" ")));
         if (channel) {
             user->addChannel(channel);
             channel->addUser(*user);
+            std::cout << user->getPort() << " added to channel " << channel->getName() << std::endl;
+        } else {
+            std::cout << "No such channel " << "\n";
         }
         return ;
     }
     if (user->getChannel() == nullptr) {
+        std::cout<<"Send to all\n";
         for (std::vector<pollfd>::iterator it = _poll_fds.begin(); it != _poll_fds.end(); it++) {
-            if (it->fd != fd) {
-                send(it->fd, buffer, sizeof(message) + 1, 0);
+            User *usr = User::findUser(it->fd);
+            if (usr != nullptr) {
+                if (it->fd != fd && usr->getChannel() == nullptr) {
+                    send(it->fd, buffer, sizeof(message) + 1, 0);
+                }
             }
         }
     } else {
+        std::cout<<"Send to " << user->getChannel()->getName() << std::endl;
         std::vector<User> users = user->getChannel()->getUsers();
-        for (std::vector<User>::iterator it = users.begin(); it != user->getChannel()->getUsers().end(); it++) {
+        for (std::vector<User>::iterator it = users.begin(); it != users.end(); it++) {
             if (it.base()->getFd() != fd) {
                 send(it.base()->getFd(), buffer, sizeof(message) + 1, 0);
             }
