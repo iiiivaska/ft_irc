@@ -148,7 +148,7 @@ void Server::disconnect_user(int fd) {
     }
     _poll_fds.erase(fd_iter);
     if (user->getChannel() != nullptr) {
-        user->getChannel()->deleteUser(*user);
+        user->getChannel()->deleteUser(user);
     }
     if (User::deleteUser(fd)) {
         std::cout << "Error: user was not disconnected\n";
@@ -185,7 +185,7 @@ void Server::message(int fd) {
         Channel* channel = findChannel(message.substr(6, message.find(" ")));
         if (channel) {
             user->addChannel(channel);
-            channel->addUser(*user);
+            channel->addUser(user);
             std::cout << user->getPort() << " added to channel " << channel->getName() << std::endl;
         } else {
             std::cout << "No such channel " << "\n";
@@ -204,10 +204,10 @@ void Server::message(int fd) {
         }
     } else {
         std::cout<<"Send to " << user->getChannel()->getName() << std::endl;
-        std::vector<User> users = user->getChannel()->getUsers();
-        for (std::vector<User>::iterator it = users.begin(); it != users.end(); it++) {
-            if (it.base()->getFd() != fd) {
-                send(it.base()->getFd(), buffer, sizeof(message) + 1, 0);
+        std::vector<User*> users = user->getChannel()->getUsers();
+        for (std::vector<User*>::iterator it = users.begin(); it != users.end(); it++) {
+            if ((*it)->getFd() != fd) {
+                send((*it)->getFd(), buffer, sizeof(message) + 1, 0);
             }
         }
     }

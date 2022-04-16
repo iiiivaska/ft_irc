@@ -16,25 +16,25 @@ void Channel::setName(std::string name) {
     _name = name;
 }
 
-void Channel::addUser(User user) {
-    for (std::vector<User>::iterator it = _users.begin(); it != _users.end(); it++) {
-        if (it->getFd() == user.getFd()) {
+void Channel::addUser(User *user) {
+    for (std::vector<User*>::iterator it = _users.begin(); it != _users.end(); it++) {
+        if ((*it)->getFd() == user->getFd()) {
             return ;
         }
     }
     _users.push_back(user);
 }
 
-void Channel::deleteUser(User user) {
-    for (std::vector<User>::iterator it = _users.begin(); it != _users.end(); it++) {
-        if (it->getFd() == user.getFd()) {
+void Channel::deleteUser(User *user) {
+    for (std::vector<User*>::iterator it = _users.begin(); it != _users.end(); it++) {
+        if ((*it)->getFd() == user->getFd()) {
             _users.erase(it);
             return ;
         }
     }
 }
 
-std::vector<User> Channel::getUsers() {
+std::vector<User*> Channel::getUsers() {
     return _users;
 }
 
