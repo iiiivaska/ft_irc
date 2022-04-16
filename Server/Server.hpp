@@ -31,6 +31,7 @@ public:
     void            start();
 
 private:
+    int                 _users; //временно для проверки утечек
     std::vector<Channel*> channels;
     int                 _working;
     int                 _port;

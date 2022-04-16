@@ -227,7 +227,11 @@ void Server::start() {
 
     _poll_fds.push_back(_server_fd);
 
+    _users = 0;
     while (_working) {
+        if (_users == 5) {
+            _working = 0;
+        }
         if (poll(_poll_fds.begin().base(), _poll_fds.size(), -1) < 0) {
             std::cerr << "Error: while polling fds\n";
             exit(1);
@@ -247,6 +251,7 @@ void Server::start() {
             if ((it->revents & POLLIN) == POLLIN) {
                 //клиент подключился
                 if (it->fd == _server_socket) {
+                    _users++;
                     accept_call();
                     break ;
                 }
