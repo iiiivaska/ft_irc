@@ -58,6 +58,9 @@ private:
     int addChannel(Channel *channel);
     int deleteChannel(Channel *channel);
     Channel* findChannel(std::string name);
+
+    //Commands
+    void startLogin(int fd);
 };
 
 #endif

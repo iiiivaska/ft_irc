@@ -169,7 +169,7 @@ void Server::message(int fd) {
         exit(1);
     }
     message.append(buffer);
-
+    std::cout << "Message: " << message << "\n";
     //Test
     if(strstr(message.c_str(), "ADDCHANNEL")) {
         if (addChannel(new Channel("mow\n")) == 1) {
