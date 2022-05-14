@@ -24,6 +24,8 @@ private:
     std::string                         _hostname;
     int                                 _port;
     static std::map<int, User*>         users;
+    int                                 _status;
+    std::string                         _nick;
 public:
     User(int fd, sockaddr_in client_hint);
     ~User();
@@ -35,7 +37,11 @@ public:
     static int          deleteUser(int fd);
     void                addChannel(Channel* channel);
     void                deleteChannel();
+    int                 getStatus();
+    void                setStatus(int status);
     Channel*            getChannel();
+    std::string         getNick();
+    void                setNick(std::string nick);
 };
 
 #endif

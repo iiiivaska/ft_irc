@@ -13,6 +13,8 @@
 #include <vector>
 #include "../User/User.hpp"
 #include "../Channel/Channel.hpp"
+#include "../commands/includes/Command.hpp"
+#include "../commands/includes/CommandParser.hpp"
 #define BUFFER_SIZE 4096
 
 class Channel;
@@ -55,6 +57,7 @@ private:
     std::vector<pollfd>::iterator   find_fd(int fd);
     void                message(int fd);
     void                readMessage(int fd);
+    void                loginUser();
 
     int addChannel(Channel *channel);
     int deleteChannel(Channel *channel);

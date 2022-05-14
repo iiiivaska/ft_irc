@@ -1,8 +1,8 @@
-FLAGS	= -Wall -Wextra -Werror -I. -std=c++98
+FLAGS	= -I.
 
-HEADER	= Server/Server.hpp utils.hpp User/User.hpp Channel/Channel.hpp
+HEADER	= Server/Server.hpp utils.hpp User/User.hpp Channel/Channel.hpp commands/includes/Command.hpp commands/includes/CommandParser.hpp commands/utilities/utilities.hpp
 
-SRCS	= Server/Server.cpp main.cpp User/User.cpp Channel/Channel.cpp
+SRCS	= Server/Server.cpp main.cpp User/User.cpp Channel/Channel.cpp commands/src/Command.cpp commands/src/CommandParser.cpp commands/utilities/utilities.cpp
 
 OBJS	= $(SRCS:.cpp=.o)
 

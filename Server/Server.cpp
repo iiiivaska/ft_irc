@@ -116,6 +116,8 @@ void Server::accept_call() {
     client_poll_fd.events = POLLIN;
     client_poll_fd.revents = 0;
 
+
+
     _poll_fds.push_back(client_poll_fd);
 
     //Необходимо сохранить клиента в мапу
@@ -169,49 +171,57 @@ void Server::message(int fd) {
         exit(1);
     }
     message.append(buffer);
-    std::cout << "Message: " << message << "\n";
-    //Test
-    if(strstr(message.c_str(), "ADDCHANNEL")) {
-        if (addChannel(new Channel("mow\n")) == 1) {
-            std::cout << "ERROR: Channel exist\n";
-            return;
-        }
-        std::cout << "Channel Added\n";
-        return;
-    }
-    //std::cout << message.substr(0, message.find(" ")) << "\n";
-    if(strstr(message.substr(0, message.find(" ")).c_str(), "ADDTO")) {
-        std::cout << message.substr(6, message.find(" ")) << "\n";
-        Channel* channel = findChannel(message.substr(6, message.find(" ")));
-        if (channel) {
-            user->addChannel(channel);
-            channel->addUser(user);
-            std::cout << user->getPort() << " added to channel " << channel->getName() << std::endl;
-        } else {
-            std::cout << "No such channel " << "\n";
-        }
-        return ;
-    }
-    if (user->getChannel() == nullptr) {
-        std::cout<<"Send to all\n";
-        for (std::vector<pollfd>::iterator it = _poll_fds.begin(); it != _poll_fds.end(); it++) {
-            User *usr = User::findUser(it->fd);
-            if (usr != nullptr) {
-                if (it->fd != fd && usr->getChannel() == nullptr) {
-                    send(it->fd, buffer, sizeof(message) + 1, 0);
-                }
-            }
-        }
+    std::cout << "Message: " << message << " " << user->getHostname() << "\n";
+    CommandParser parser = CommandParser();
+    Command *command = parser.parseCommand(message);
+    std::cout << "getName(): " << command->getName() << "\n" << "getMessage(): " << command->getMessage() << std::endl;
+    if (user->getStatus() == 0) {
+        //Залогинить пользователя
     } else {
-        std::cout<<"Send to " << user->getChannel()->getName() << std::endl;
-        std::vector<User*> users = user->getChannel()->getUsers();
-        for (std::vector<User*>::iterator it = users.begin(); it != users.end(); it++) {
-            if ((*it)->getFd() != fd) {
-                send((*it)->getFd(), buffer, sizeof(message) + 1, 0);
-            }
-        }
+        //Обработать команду
     }
-    //EndTest
+//    //Test
+//    if(strstr(message.c_str(), "ADDCHANNEL")) {
+//        if (addChannel(new Channel("mow\n")) == 1) {
+//            std::cout << "ERROR: Channel exist\n";
+//            return;
+//        }
+//        std::cout << "Channel Added\n";
+//        return;
+//    }
+//    //std::cout << message.substr(0, message.find(" ")) << "\n";
+//    if(strstr(message.substr(0, message.find(" ")).c_str(), "ADDTO")) {
+//        std::cout << message.substr(6, message.find(" ")) << "\n";
+//        Channel* channel = findChannel(message.substr(6, message.find(" ")));
+//        if (channel) {
+//            user->addChannel(channel);
+//            channel->addUser(user);
+//            std::cout << user->getPort() << " added to channel " << channel->getName() << std::endl;
+//        } else {
+//            std::cout << "No such channel " << "\n";
+//        }
+//        return ;
+//    }
+//    if (user->getChannel() == nullptr) {
+//        std::cout<<"Send to all\n";
+//        for (std::vector<pollfd>::iterator it = _poll_fds.begin(); it != _poll_fds.end(); it++) {
+//            User *usr = User::findUser(it->fd);
+//            if (usr != nullptr) {
+//                if (it->fd != fd && usr->getChannel() == nullptr) {
+//                    send(it->fd, buffer, sizeof(message) + 1, 0);
+//                }
+//            }
+//        }
+//    } else {
+//        std::cout<<"Send to " << user->getChannel()->getName() << std::endl;
+//        std::vector<User*> users = user->getChannel()->getUsers();
+//        for (std::vector<User*>::iterator it = users.begin(); it != users.end(); it++) {
+//            if ((*it)->getFd() != fd) {
+//                send((*it)->getFd(), buffer, sizeof(message) + 1, 0);
+//            }
+//        }
+//    }
+//    //EndTest
 }
 
 void Server::start() {
@@ -251,7 +261,7 @@ void Server::start() {
             if ((it->revents & POLLIN) == POLLIN) {
                 //клиент подключился
                 if (it->fd == _server_socket) {
-                    _users++;
+                    _users++; //временно
                     accept_call();
                     break ;
                 }

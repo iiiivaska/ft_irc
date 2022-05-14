@@ -8,6 +8,8 @@ User::User(int fd, sockaddr_in client_hint) {
     _hostname = inet_ntoa(_client_hint.sin_addr);
     _port = ntohs(_client_hint.sin_port);
     _channel = nullptr;
+    _status = 0;
+    _nick = "";
 }
 
 User::~User() {
@@ -57,6 +59,22 @@ void User::deleteChannel() {
 
 Channel *User::getChannel() {
     return _channel;
+}
+
+int User::getStatus() {
+    return _status;
+}
+
+void User::setStatus(int status) {
+    _status = status;
+}
+
+void User::setNick(std::string nick) {
+    _nick = nick;
+}
+
+std::string User::getNick() {
+    return _nick;
 }
 
 //std::vector<pollfd>::iterator User::getClientPollFd() {
