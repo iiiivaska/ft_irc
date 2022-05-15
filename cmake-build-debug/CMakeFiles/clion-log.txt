@@ -1,0 +1,4 @@
+/snap/clion/190/bin/cmake/linux/bin/cmake -DCMAKE_BUILD_TYPE=Debug -DCMAKE_MAKE_PROGRAM=/snap/clion/190/bin/ninja/linux/ninja -DCMAKE_CXX_COMPILER=/usr/bin/clang++ -G Ninja -S "/home/nico/Рабочий стол/school21/ft_irc" -B "/home/nico/Рабочий стол/school21/ft_irc/cmake-build-debug"
+-- Configuring done
+-- Generating done
+-- Build files have been written to: /home/nico/Рабочий стол/school21/ft_irc/cmake-build-debug

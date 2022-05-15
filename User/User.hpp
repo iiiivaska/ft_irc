@@ -1,5 +1,8 @@
 #ifndef USER_HPP
 # define USER_HPP
+# define SUCCESS_AUTH 1
+# define FAILURE_PASS 0
+# define REGISTRED_USER 2
 #include <iostream>
 #include <string>
 #include <sys/types.h>
@@ -34,6 +37,7 @@ public:
     int                 getFd();
     static void         addUser(int fd, User *user);
     static User*        findUser(int fd);
+	User*				findUserByNick(std::string name);
     static int          deleteUser(int fd);
     void                addChannel(Channel* channel);
     void                deleteChannel();
@@ -42,6 +46,7 @@ public:
     Channel*            getChannel();
     std::string         getNick();
     void                setNick(std::string nick);
+	bool				findUser(std::string nick);
 };
 
 #endif
