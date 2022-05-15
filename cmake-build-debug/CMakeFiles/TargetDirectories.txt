@@ -1,0 +1,3 @@
+/home/nico/Рабочий стол/school21/ft_irc/cmake-build-debug/CMakeFiles/ft_irc.dir
+/home/nico/Рабочий стол/school21/ft_irc/cmake-build-debug/CMakeFiles/edit_cache.dir
+/home/nico/Рабочий стол/school21/ft_irc/cmake-build-debug/CMakeFiles/rebuild_cache.dir

@@ -8,7 +8,7 @@ User::User(int fd, sockaddr_in client_hint) {
     _hostname = inet_ntoa(_client_hint.sin_addr);
     _port = ntohs(_client_hint.sin_port);
     _channel = nullptr;
-    _status = 0;
+    _status = FAILURE_PASS;
     _nick = "";
 }
 
@@ -77,6 +77,23 @@ std::string User::getNick() {
     return _nick;
 }
 
+bool User::findUser(std::string nick) {
+	for(std::map<int, User*>::iterator beg = users.begin(); beg != users.end(); beg++) {
+		if (beg->second->getNick() == nick) {
+			return true;
+		}
+	}
+	return false;
+}
+
+User *User::findUserByNick(std::string name) {
+	for(std::map<int, User*>::iterator beg = users.begin(); beg != users.end(); beg++) {
+		if (beg->second->getNick() == name) {
+			return beg->second;
+		}
+	}
+	return nullptr;
+}
 //std::vector<pollfd>::iterator User::getClientPollFd() {
 //    return _client_poll_fd;
 //}

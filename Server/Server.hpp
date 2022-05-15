@@ -1,5 +1,6 @@
 #ifndef SERVER_HPP
 # define SERVER_HPP
+# define SERVER_NAME "gitignore"
 
 #include <iostream>
 #include <string>
@@ -11,6 +12,7 @@
 #include <poll.h>
 #include <fcntl.h>
 #include <vector>
+#include <cstring>
 #include "../User/User.hpp"
 #include "../Channel/Channel.hpp"
 #include "../commands/includes/Command.hpp"
@@ -18,6 +20,7 @@
 #define BUFFER_SIZE 4096
 
 class Channel;
+class User;
 
 class Server {
     struct args {
@@ -65,6 +68,9 @@ private:
 
     //Commands
     void startLogin(int fd);
+	bool authenticationUser(int fd, User *user, Command *command);
+
+	void sendMsg(const std::string &message, int fd) const;
 };
 
 #endif

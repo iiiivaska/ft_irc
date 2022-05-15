@@ -1,7 +1,10 @@
 #include "../includes/CommandParser.hpp"
 
 Command *CommandParser::parseCommand(std::string const &strCommand) {
-	std::string command = skipStartSpaces(strCommand);
+	std::string newStr = strCommand;
+	newStr.pop_back();
+
+	std::string command = skipStartSpaces(newStr);
 	int pos = command.find(' ');
 	std::string cmd = command.substr(0, pos);
 
