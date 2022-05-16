@@ -229,6 +229,32 @@ void Server::message(int fd) {
 			disconnect_user(user->getFd());
 		}
 
+        if (command->getName() == "JOIN") {
+            //std::cout << command->getMessage()[0];
+            addChannel(new Channel(command->getMessage()));
+            Channel* channel = findChannel(command->getMessage());
+            if (channel) {
+                user->addChannel(channel);
+                channel->addUser(user);
+                std::cout << user->getPort() << " added to channel " << channel->getName() << std::endl;
+            } else {
+                std::cout << "No such channel " << "\n";
+            }
+        }
+
+        if (command->getName() == "PART") {
+            if (user->getChannel() != nullptr) {
+                Channel* channel = findChannel(command->getMessage());
+                if (channel) {
+                    user->deleteChannel();
+                    channel->deleteUser(user);
+                    std::cout << user->getPort() << " deleted from channel " << channel->getName() << std::endl;
+                } else {
+                    std::cout << "No such channel " << "\n";
+                }
+            }
+        }
+
 //		for (std::vector<pollfd>::iterator it = _poll_fds.begin(); it != _poll_fds.end(); it++) {
 //			User *usr = User::findUser(it->fd);
 //			if (usr != nullptr) {

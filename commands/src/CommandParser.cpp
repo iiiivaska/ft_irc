@@ -29,15 +29,15 @@ bool CommandParser::isCommand(const std::string &cmd) {
 }
 
 CommandParser::CommandParser() {
-	commandPool.push_back("PASS");
-	commandPool.push_back("NICK");
+	commandPool.push_back("PASS"); //+
+	commandPool.push_back("NICK"); //+
 	commandPool.push_back("USER");
-	commandPool.push_back("QUIT");
-	commandPool.push_back("PING");
-	commandPool.push_back("JOIN");
+	commandPool.push_back("QUIT"); //+
+	commandPool.push_back("PING"); //Наверное не нужно
+	commandPool.push_back("JOIN"); //+
 	commandPool.push_back("PART");
 	commandPool.push_back("KICK");
-	commandPool.push_back("PRIVMSG");
+	commandPool.push_back("PRIVMSG"); //+
 }
 
 
